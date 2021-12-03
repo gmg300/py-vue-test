@@ -8,7 +8,7 @@ class Http {
             headers: {
                 'Content-Type': 'application/json'
             },
-            withCredentials: true
+            withCredentials: false
         })
     }
     async request(method, url_path, params = {}, config = {}) {

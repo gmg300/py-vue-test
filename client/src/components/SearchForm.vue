@@ -13,15 +13,25 @@
           dense
         />
         <v-text-field
+          v-model="search_value"
           :label="`Enter ${textFieldLabel}`"
           outlined
           dense
         />
-        <v-btn color="primary">
+        <v-btn
+          color="primary"
+          :disabled="!valid"
+          @click="search"
+        >
           <v-icon>mdi-search</v-icon> Search
         </v-btn>
       </v-form>
       </v-col>
+    </v-row>
+    <v-row v-show="search_result" justify="center">
+        <v-col cols="8">
+            {{ search_result }}
+        </v-col> 
     </v-row>
   </v-container>
 </template>
@@ -37,12 +47,13 @@
 </style>
 
 <script>
-// import SearchService from '@/services/SearchService';
+import SearchService from '@/services/SearchService';
 
 export default {
   name: 'SearchForm',
   data: () => ({
     search_type: "",
+    search_value: "",
     search_types: [
       {
         text: 'NetId',
@@ -52,9 +63,13 @@ export default {
         text: 'Email',
         value: 'mail'
       },
-    ]
+    ],
+    search_result: null
   }),
   computed: {
+    valid() {
+      return !!this.search_type && !!this.search_value;
+    },
     textFieldLabel() {
       switch(this.search_type) {
         case 'netid':
@@ -64,6 +79,11 @@ export default {
         default:
           return '...';
       }
+    }
+  },
+  methods: {
+    async search() {
+        this.search_result = await SearchService.get(this.search_type, this.search_value);
     }
   }
 };
